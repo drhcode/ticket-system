@@ -1,25 +1,27 @@
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
 const User = require('../models/userModel');
 
-// @decs    Register a new user
-// @route  /api/users
+// @desc    Register a new user
+// @route   /api/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
-  //validation
+  // Validation
   if (!name || !email || !password) {
     res.status(400);
-    throw new Error('please include all fields');
+    throw new Error('Please include all fields');
   }
 
-  // Find if user is already registered
+  // Find if user already exists
   const userExists = await User.findOne({ email });
+
   if (userExists) {
     res.status(400);
-    throw new Error('User already exits');
+    throw new Error('User already exists');
   }
 
   // Hash password
@@ -35,19 +37,19 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (user) {
     res.status(201).json({
-      _id: user.id,
+      _id: user._id,
       name: user.name,
       email: user.email,
       token: generateToken(user._id)
     });
   } else {
     res.status(400);
-    throw new Error('Invalid user data');
+    throw new error('Invalid user data');
   }
 });
 
 // @desc    Login a user
-// @route  /api/users
+// @route   /api/users/login
 // @access  Public
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -57,7 +59,7 @@ const loginUser = asyncHandler(async (req, res) => {
   // Check user and passwords match
   if (user && (await bcrypt.compare(password, user.password))) {
     res.status(200).json({
-      _id: user.id,
+      _id: user._id,
       name: user.name,
       email: user.email,
       token: generateToken(user._id)
@@ -68,8 +70,8 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-// @decs    Get current user
-// @route  /api/users/me
+// @desc    Get current user
+// @route   /api/users/me
 // @access  Private
 const getMe = asyncHandler(async (req, res) => {
   const user = {
@@ -80,7 +82,7 @@ const getMe = asyncHandler(async (req, res) => {
   res.status(200).json(user);
 });
 
-//Generate token
+// Generate token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: '30d'
