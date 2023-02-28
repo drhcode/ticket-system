@@ -1,13 +1,12 @@
-import { FaSignInAlt } from 'react-icons/fa';
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import swal from 'sweetalert';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaSignInAlt } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { login } from '../features/auth/authSlice';
-import reset from '../features/auth/authSlice';
 import Spinner from '../components/Spinner';
 
-const Login = () => {
+function Login() {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -18,41 +17,34 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { user, isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.auth
-  );
+  const { isLoading } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    if (isError) {
-      swal(message);
-    }
-
-    //Redirect when login in
-    if (isSuccess || user) {
-      navigate('/');
-      swal('Logged in successfully');
-    }
-
-    dispatch(reset);
-  }, [isError, isSuccess, user, message, navigate, dispatch]);
-
-  const handleChange = (e) => {
+  const onChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value
     }));
   };
 
-  const handelSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
+
     const userData = {
       email,
       password
     };
-    dispatch(login(userData));
-  };
 
-  //login user
+    dispatch(login(userData))
+      .unwrap()
+      .then((user) => {
+        swal({
+          title: `Logged in as ${user.name}`,
+          icon: 'success'
+        });
+        navigate('/');
+      })
+      .catch(swal(`Error`));
+  };
 
   if (isLoading) {
     return <Spinner />;
@@ -64,11 +56,11 @@ const Login = () => {
         <h1>
           <FaSignInAlt /> Login
         </h1>
-        <p>Please login to get support</p>
+        <p>Please log in to get support</p>
       </section>
 
       <section className="form">
-        <form onSubmit={handelSubmit}>
+        <form onSubmit={onSubmit}>
           <div className="form-group">
             <input
               type="email"
@@ -76,8 +68,8 @@ const Login = () => {
               id="email"
               name="email"
               value={email}
-              onChange={handleChange}
-              placeholder="Email"
+              onChange={onChange}
+              placeholder="Enter your email"
               required
             />
           </div>
@@ -88,18 +80,18 @@ const Login = () => {
               id="password"
               name="password"
               value={password}
-              onChange={handleChange}
-              placeholder="Password"
+              onChange={onChange}
+              placeholder="Enter password"
               required
             />
           </div>
           <div className="form-group">
-            <button className="btn btn-block">Login</button>
+            <button className="btn btn-block">Submit</button>
           </div>
         </form>
       </section>
     </>
   );
-};
+}
 
 export default Login;

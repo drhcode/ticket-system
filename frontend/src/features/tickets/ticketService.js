@@ -15,7 +15,7 @@ const createTicket = async (ticketData, token) => {
   return response.data;
 };
 
-// Get users tickets
+// Get user tickets
 const getTickets = async (token) => {
   const config = {
     headers: {
@@ -28,7 +28,7 @@ const getTickets = async (token) => {
   return response.data;
 };
 
-// Get users ticket
+// Get user ticket
 const getTicket = async (ticketId, token) => {
   const config = {
     headers: {
@@ -49,9 +49,9 @@ const closeTicket = async (ticketId, token) => {
     }
   };
 
-  const response = await axios.get(
+  const response = await axios.put(
     API_URL + ticketId,
-    { status: 'Closed' },
+    { status: 'closed' },
     config
   );
 

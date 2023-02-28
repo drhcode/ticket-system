@@ -7,6 +7,8 @@ import NewTicket from './pages/NewTicket';
 import PrivateRoute from './components/PrivateRoute';
 import Tickets from './pages/Tickets';
 import Ticket from './pages/Tickets';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
@@ -30,6 +32,7 @@ function App() {
           </Routes>
         </div>
       </Router>
+      <ToastContainer />
     </>
   );
 }

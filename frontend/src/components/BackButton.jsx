@@ -1,11 +1,14 @@
-import { FaArrowAltCircleLeft } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { FaArrowCircleLeft } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
-const BackButton = ({ url }) => {
+// NOTE: here navigate the user in the history stack for a true 'back' button
+
+const BackButton = () => {
+  const navigate = useNavigate();
   return (
-    <Link to={url} className="bnt btn-reverse btn-back">
-      <FaArrowAltCircleLeft /> Back
-    </Link>
+    <button className="btn btn-block btn-back" onClick={() => navigate(-1)}>
+      <FaArrowCircleLeft /> Back
+    </button>
   );
 };
 
